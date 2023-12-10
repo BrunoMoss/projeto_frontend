@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid com jQuery e Bootstrap</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <!-- Inclua a biblioteca Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom.css -->
+    <link rel="stylesheet" href="styles.css">
+
+     <!-- jQuery e Bootstrap JS -->
+     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+     <script src="https://unpkg.com/@popperjs/core@2"></script>
+     <!-- Datepicker do Bootstrap -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+ 
+     <!-- Custom.js -->
+     <script src="scripts.js"></script> 
+</head>
+
+<body>
+    <div id="indexButton" onclick="window.location.href = 'index.html'">
+        <i class="fas fa-arrow-left"></i> <!-- Ícone de configurações (usando Font Awesome como exemplo) -->
+        Voltar
+    </div>
+    <div class="container mt-4">
+        <h2>Painel carregamento de dados</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Data Inicial</th>
+                    <th>Data Final</th>
+                    <th>Status</th>
+                    <th>Executar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>Atualiza Cadastro Fundos</p>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <i name="resultado" style="font-size:24px" class="far fa-question-circle text-secondary" data-toggle="tooltip" data-placement="top"
+                        title="Aguardando execução"></i>
+                    </td>
+                    <td>
+                        <i id="cadastro"  style="cursor:pointer;font-size:24px" class="far fa-play-circle text-primary" onclick="acionarJob(this)" data-toggle="tooltip"
+                            data-placement="top" title="Clique para acionar o job"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Atualiza Portfolio</p>
+                    </td>
+                    <td>
+                        <div class="input-group date" id="startdateportf" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" data-target="#startdateportf"
+                                placeholder="Data Inicial" />
+                            <div class="input-group-append" data-target="#startdateportf" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group date" id="enddateportf" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" data-target="#enddateportf"
+                                placeholder="Data Final" />
+                            <div class="input-group-append" data-target="#enddateportf" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <i name="resultado"  style="font-size:24px" class="far fa-question-circle text-secondary" data-toggle="tooltip" data-placement="top"
+                            title="Aguardando execução"></i>
+                    </td>
+                    <td>
+                        <i id="portfolio" style="cursor:pointer;font-size:24px" class="far fa-play-circle text-primary" onclick="acionarJob(this)" data-toggle="tooltip"
+                            data-placement="top" title="Clique para acionar o job"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Atualiza Cota</p>
+                    </td>
+                    <td>
+                        <div class="input-group date" id="startdatecota" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" data-target="#startdatecota"
+                                placeholder="Data Inicial" />
+                            <div class="input-group-append" data-target="#startdatecota" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group date" id="enddatecota" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" data-target="#enddatecota"
+                                placeholder="Data Final" />
+                            <div class="input-group-append" data-target="#enddatecota" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <i name="resultado" style="font-size:24px" class="far fa-question-circle text-secondary" data-toggle="tooltip" data-placement="top"
+                            title="Aguardando execução"></i>
+                    </td>
+                    <td>
+                        <i id="cota" style="cursor:pointer;font-size:24px" class="far fa-play-circle text-primary" onclick="acionarJob(this)" data-toggle="tooltip"
+                            data-placement="top" title="Clique para acionar o job"></i>
+                    </td>
+                </tr>
+                <!-- Adicione mais linhas conforme necessário -->
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('.date').datepicker({
+                format: 'mm/yyyy',
+                viewMode: 'months',
+                minViewMode: 'months',
+                autoclose: true
+            });
+        });
+        function converterData(inputData) {
+            // Dividir a entrada em mês e ano
+            var partes = inputData.split('/');
+            var mes = parseInt(partes[0], 10);
+            var ano = parseInt(partes[1], 10);
+
+            // Obter o último dia do mês
+            var ultimoDia = new Date(ano, mes, 0).getDate();
+
+            // Formatar a data no formato desejado (dd/mm/yyyy)
+            var dataFormatada = ultimoDia.toString().padStart(2, '0') + '/' + partes[0].padStart(2, '0') + '/' + ano;
+
+            return dataFormatada;
+        }
+        function change_class_icon(icon,newClass){
+            className = $(icon).attr('class');
+            $(icon).removeClass(className);
+            $(icon).addClass(newClass);
+        }
+        function acionarJob(button) {
+            var dates;
+            var startDate;
+            var endDate;
+            var icon;
+            var buttonId = $(button).attr('id');
+            if (buttonId == 'portfolio'){
+                startDate = $('#startdateportf').datepicker('getDate','');
+                endDate = $('#enddateportf').datepicker('getDate','');
+            }else if (buttonId =='cota'){
+                startDate = $('#startdatecota').datepicker('getDate','');
+                endDate = $('#enddatecota').datepicker('getDate','');
+            }else{
+                startDate = new Date('2023-01-01');
+                endDate  = new Date('2023-01-01');
+            }
+
+            icon = $(button).closest('tr').find('[name="resultado"]');
+           
+            change_class_icon(icon,'fas fa-exclamation-circle text-warning');
+            $(icon).attr('title', 'Executando...');
+            $.ajax({
+                type: 'POST',
+                url: 'http://127.0.0.1:5000/atualiza', // Substitua pela URL do seu backend
+                data: {
+                    datainicial: startDate.toISOString(),
+                    datafinal: endDate.toISOString(),
+                    tarefa: buttonId,
+                },
+                success: function (response) {
+                    console.log('Requisição POST enviada com sucesso:', response);
+                    //$(icon).removeClass('fas fa-question-circle text-secondary');
+                    //$(icon).removeClass('fas fa-times-circle text-danger');
+                    //$(icon).removeClass('fas fa-exclamation-circle text-warning');
+                    //$(icon).addClass('fas fa-check-circle text-success');
+                    change_class_icon(icon,'far fa-check-circle text-success');
+                    $(icon).attr('title', 'Job executado com sucesso: ' + JSON.stringify(response));
+                },
+                error: function (error) {
+                    console.error('Erro ao enviar a requisição POST:', error);
+                    //$(icon).removeClass('fas fa-question-circle text-secondary');
+                    //$(icon).removeClass('fas fa-check-circle text-success');
+                    //$(icon).addClass('fas fa-times-circle text-danger');
+                    change_class_icon(icon,'far fa-times-circle text-danger');
+                    $(icon).attr('title', 'Erro ao executar o job. Detalhes: ' + JSON.stringify(error));
+                }
+            });
+            // Atualiza o tooltip
+            $(icon).tooltip('show');
+        }
+    </script>
+
+</body>
+
+</html>

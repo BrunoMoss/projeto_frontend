@@ -1,0 +1,76 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.ui-widget {
+    margin-top: 2em;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+i {
+    cursor:pointer
+}
+
+input {
+    display:block;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#log {
+    height: 200px;
+    width: 300px;
+    overflow: auto;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.ui-autocomplete-loading {
+    background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
+}
+
+.date-inputs {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chart-container {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.subchart-container {
+    width: 48%; /* Defina a largura desejada para os gráficos */
+    margin-bottom: 20px;
+}
+
+canvas {
+    max-width: 100%; /* Garante que o gráfico não ultrapasse a largura do contêiner */
+    height: auto;
+}
+#login-form {
+    max-width: 300px;
+    margin: auto;
+    margin-top: 100px;
+}
+#fundosselecionados tbody tr.top-five-row {
+    color: rgb(55, 0, 255); /* Cor da fonte vermelha */
+    font-style: italic; /* Texto em itálico */
+}
+
+#adminButton,#indexButton {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
