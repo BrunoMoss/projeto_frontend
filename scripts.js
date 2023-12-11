@@ -17,7 +17,6 @@ $(document).ready(function () {
         selectedItems.push(item);
         updateSelectedItemsList();
     }
-
     // Função para remover um item da lista de itens selecionados
     function removeItemFromList(item) {
         selectedItems = selectedItems.filter(function (selectedItem) {
@@ -48,14 +47,6 @@ $(document).ready(function () {
             selectedItemsList.append(listItem);
         });
     }
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
     function getRandomColorWithTransparency(k) {
         // Gera um valor hexadecimal aleatório para a cor
         var randomColor = Math.floor(Math.random() * 16777215).toString(16);
@@ -74,10 +65,6 @@ $(document).ready(function () {
 
         return rgbaColor;
     }
-    function log(message) {
-        $("<div>").text(message).prependTo("#log");
-        $("#log").scrollTop(0);
-    }
     $("#startdate, #enddate").datepicker({
         showOtherMonths: true,
         selectOtherMonths: true,
@@ -93,9 +80,9 @@ $(document).ready(function () {
     function extractLast(term) {
         return split(term).pop();
     }
-    function removerLinhasTopFive() {
+    function removerLinhasTopFundos() {
         // Lógica para remover as linhas adicionadas
-        table.rows('.top-five-row').remove().draw();
+        table.rows('.top-funds-row').remove().draw();
     }
     function cnpjExisteNaTabela(cnpj) {
         var rows = table.rows().data();
@@ -116,7 +103,7 @@ $(document).ready(function () {
         ]).draw().nodes().to$();
 
         if (top) {
-            $(newRow).addClass('top-five-row');
+            $(newRow).addClass('top-funds-row');
         }
 
         $(newRow).find('td:last-child').addClass('text-center'); // Centraliza o botão
@@ -129,7 +116,7 @@ $(document).ready(function () {
         row.remove().draw();
         //}
     });
-    async function adicionarTopfive() {
+    async function adicionarTopfundos() {
         var startDate = $('#startdate').val();
         var endDate = $('#enddate').val();
         var classe = $('#class-select')[0].value;
@@ -140,7 +127,7 @@ $(document).ready(function () {
             classe: classe
         };
         $.ajax({
-            url: 'http://127.0.0.1:5000/topfunds',
+            url: 'http://127.0.0.1:5000/topfundos',
             method: 'GET',
             dataType: 'json',
             async: false,
@@ -159,12 +146,12 @@ $(document).ready(function () {
             }
         });
     }
-    $('#adicionarTopFive').on('change', function () {
+    $('#adicionarTopFundos').on('change', function () {
         if (this.checked) {
-            adicionarTopfive();
+            adicionarTopfundos();
             atualizaCotaChart();
         } else {
-            removerLinhasTopFive();
+            removerLinhasTopFundos();
             atualizaCotaChart();
         }
     });
@@ -325,7 +312,7 @@ $(document).ready(function () {
         var endDate = $('#enddate').val();
         var values = table.column(1).data().toArray()
         populateSelectMenu(startDate, endDate);
-        var ref_date = $('#month-select')[0].value  
+        var ref_date = $('#month-select')[0].value
         // Verificando se todas as informações necessárias estão disponíveis
         if (startDate && endDate && values.length > 0) {
             // Chamando a função para buscar dados da API
@@ -424,7 +411,7 @@ $(document).ready(function () {
                     stacked: false,
                     ticks: {
                         callback: function (value) {
-                            return value + "%"; // Adiciona o símbolo de porcentagem aos rótulos do eixo y
+                            return value.toFixed(2) + "%"; // Adiciona o símbolo de porcentagem aos rótulos do eixo y
                         },
                     },
                     title: {
@@ -448,8 +435,51 @@ $(document).ready(function () {
         // Atualizando o gráfico
         barChart.update();
     }
+    
+    function change_class_icon(icon, newClass) {
+        className = $(icon).attr('class');
+        $(icon).removeClass(className);
+        $(icon).addClass(newClass);
+    }
+    function acionarJob(button) {
+        var startDate;
+        var endDate;
+        var icon;
+        var buttonId = $(button).attr('id');
+        if (buttonId == 'portfolio') {
+            startDate = $('#startdateportf').datepicker('getDate', '');
+            endDate = $('#enddateportf').datepicker('getDate', '');
+        } else if (buttonId == 'cota') {
+            startDate = $('#startdatecota').datepicker('getDate', '');
+            endDate = $('#enddatecota').datepicker('getDate', '');
+        } else {
+            startDate = new Date('2023-01-01');
+            endDate = new Date('2023-01-01');
+        }
 
+        icon = $(button).closest('tr').find('[name="resultado"]');
 
-
-
+        change_class_icon(icon, 'fas fa-exclamation-circle text-warning');
+        $(icon).attr('title', 'Executando...');
+        $.ajax({
+            type: 'POST',
+            url: 'http://127.0.0.1:5000/atualiza',
+            data: {
+                datainicial: startDate.toISOString(),
+                datafinal: endDate.toISOString(),
+                tarefa: buttonId,
+            },
+            success: function (response) {
+                console.log('Requisição POST enviada com sucesso:', response);
+                change_class_icon(icon, 'far fa-check-circle text-success');
+                $(icon).attr('title', 'Job executado com sucesso: ' + JSON.stringify(response));
+            },
+            error: function (error) {
+                console.error('Erro ao enviar a requisição POST:', error);
+                change_class_icon(icon, 'far fa-times-circle text-danger');
+                $(icon).attr('title', 'Erro ao executar o job. Detalhes: ' + JSON.stringify(error));
+            }
+        });
+        $(icon).tooltip('show');
+    }
 });
