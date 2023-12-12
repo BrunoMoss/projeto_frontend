@@ -47,14 +47,13 @@ $(document).ready(function () {
             selectedItemsList.append(listItem);
         });
     }
-    function getRandomColorWithTransparency(k) {
-        // Gera um valor hexadecimal aleatório para a cor
-        var randomColor = Math.floor(Math.random() * 16777215).toString(16);
-
-        // Preenche com zeros à esquerda, se necessário
-        while (randomColor.length < 6) {
-            randomColor = '0' + randomColor;
-        }
+    function getRandomColorWithOpacity(alpha) {
+        const hue = Math.floor(Math.random() * 360); // Escolhe uma tonalidade aleatória
+        const saturation = Math.floor(Math.random() * 30) + 70; // Garante uma saturação mínima de 70%
+        const lightness = Math.floor(Math.random() * 20) + 30; // Garante uma luminosidade mínima de 30%
+      
+        return `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`;
+      }
 
         // Adiciona o fator de transparência à cor (0 a 1)
         var rgbaColor = 'rgba(' +
@@ -210,7 +209,7 @@ $(document).ready(function () {
             lineChart.data.datasets.push({
                 label: data.cotas_fundos[i].razao_social,
                 data: calcularRentabilidade(values),
-                borderColor: getRandomColorWithTransparency(0.7),
+                borderColor: getRandomColorWithOpacity(0.8),
                 borderWidth: 2,
                 pointRadius: 0,
                 fill: false
@@ -256,7 +255,7 @@ $(document).ready(function () {
                                 y: ativo.PnL
                             };
                         }),
-                        backgroundColor: getRandomColorWithTransparency(0.7)
+                        backgroundColor: getRandomColorWithOpacity(0.8)
                     };
                 });
                 updateBarChart(datasets);
@@ -434,52 +433,5 @@ $(document).ready(function () {
         barChart.data = { datasets: data };
         // Atualizando o gráfico
         barChart.update();
-    }
-    
-    function change_class_icon(icon, newClass) {
-        className = $(icon).attr('class');
-        $(icon).removeClass(className);
-        $(icon).addClass(newClass);
-    }
-    function acionarJob(button) {
-        var startDate;
-        var endDate;
-        var icon;
-        var buttonId = $(button).attr('id');
-        if (buttonId == 'portfolio') {
-            startDate = $('#startdateportf').datepicker('getDate', '');
-            endDate = $('#enddateportf').datepicker('getDate', '');
-        } else if (buttonId == 'cota') {
-            startDate = $('#startdatecota').datepicker('getDate', '');
-            endDate = $('#enddatecota').datepicker('getDate', '');
-        } else {
-            startDate = new Date('2023-01-01');
-            endDate = new Date('2023-01-01');
-        }
-
-        icon = $(button).closest('tr').find('[name="resultado"]');
-
-        change_class_icon(icon, 'fas fa-exclamation-circle text-warning');
-        $(icon).attr('title', 'Executando...');
-        $.ajax({
-            type: 'POST',
-            url: 'http://127.0.0.1:5000/atualiza',
-            data: {
-                datainicial: startDate.toISOString(),
-                datafinal: endDate.toISOString(),
-                tarefa: buttonId,
-            },
-            success: function (response) {
-                console.log('Requisição POST enviada com sucesso:', response);
-                change_class_icon(icon, 'far fa-check-circle text-success');
-                $(icon).attr('title', 'Job executado com sucesso: ' + JSON.stringify(response));
-            },
-            error: function (error) {
-                console.error('Erro ao enviar a requisição POST:', error);
-                change_class_icon(icon, 'far fa-times-circle text-danger');
-                $(icon).attr('title', 'Erro ao executar o job. Detalhes: ' + JSON.stringify(error));
-            }
-        });
-        $(icon).tooltip('show');
     }
 });
